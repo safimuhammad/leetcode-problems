@@ -132,10 +132,10 @@ def searchInsert(nums,target):
 
 # nums = [1,3,5,6] 
 # target = 7
-# print(searchInsert(nums, target))
 
 
-# Two-Poiinters Algorithm
+
+# Two-Pointers Algorithm
 nums = [-4,-1,0,3,10]
 def twoPointers(nums):
     n=len(nums)
@@ -158,7 +158,7 @@ def twoPointers(nums):
     
     return arr
 
-print(twoPointers(nums))
+
 
 
 def sortedSquares(nums):
@@ -177,3 +177,131 @@ def sortedSquares(nums):
         idx -= 1
     
     return res
+
+
+def rotateArray1(arr,n):
+    return  arr[-n:] + arr[:-n]
+  
+
+
+def rotateArray2(arr,n):
+    k=0
+    j=len(arr)-1
+    
+
+    for i in range(n):
+         arr.insert(k,arr[j])
+         arr.pop(j+1)
+     
+        
+    return arr
+        
+
+
+
+arr=[0]
+def moveZeros(arr):
+    i=0
+    j=len(arr)-1
+    
+
+    while i<=j :
+        
+        
+        if arr[i] == 0:
+            
+            arr.insert(len(arr), arr[i])
+            arr.pop(i)
+            j=j-1
+            
+            
+        elif arr[j]==0:
+            arr.insert(len(arr), arr[j])
+            arr.pop(j)
+            i=i+1 
+  
+        else:
+           
+            j=j-1
+    return arr
+
+
+
+
+numbers =[-1,0]
+target = -1
+def twoSum(numbers,target):
+    i=0
+    j=len(numbers)-1
+    addArr=[]
+
+    while i <=j:
+        if (numbers[i]+numbers[j]) >target:
+            j-=1
+        elif (numbers[i]+numbers[j])< target:
+            i+=1
+        elif (numbers[i]+numbers[j])==target:
+            addArr=[i+1,j+1]
+            
+            break
+        else:
+            j-=1
+           
+
+s = ["H","a","n","n","a","h"]
+def reverseString(s):
+    i=0
+    j=len(s)-1
+    temp1=0
+    temp2=0
+    while i<=j:
+        if i <= j :
+            temp1=s[i]
+            temp2=j
+            s[i]=s[j]
+            s[j]=temp1
+            i+=1
+            j-=1
+            
+s = "Let's take LeetCode contest"
+#this method returns in reversed order
+def reverseWords(s):
+   
+    arrS= list(s)
+    i=0
+    j=len(arrS)-1
+    print(s.split())
+    while i<=j:
+        if i <= j :
+            temp1=arrS[i]
+            temp2=j
+            arrS[i]=arrS[j]
+            arrS[j]=temp1
+            i+=1
+            j-=1
+            strng=[''.join(arrS)]
+    return strng
+
+#this method returns in original order        
+def reverseWords2(s):
+   
+    arrS= s.split()
+    master_array=[]
+    for k in range(len(arrS)):
+        sub_array=list(arrS[k])
+        i=0
+        j=len(sub_array)-1
+        while i<=j:
+            if i <= j :
+                temp1=sub_array[i]
+                sub_array[i]=sub_array[j]
+                sub_array[j]=temp1
+                i+=1
+                j-=1
+        strng=''.join(sub_array)
+        master_array.append(strng)
+        
+    return ' '.join(master_array)   
+
+
+
