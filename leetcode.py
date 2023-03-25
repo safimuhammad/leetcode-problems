@@ -1090,15 +1090,68 @@ def find_out_mr_wrong(conversation):
 
 
 
+def find_out_mr_wrong2(conversation):
+    mapped_form={}
+    last_form={}
+    len_convo=len(conversation)
+    liar='Null'
+    # revamping the mapping system
+    for i in range(len_convo):
+        print(conversation[i])
+        get_name = conversation[i].split(":")
+        get_pos = get_name[1]
+        for j in range(len(get_pos)):
+            
+            if get_pos[j].isnumeric():
+                if get_pos[j+1] == 's':
+                    mapped_form[get_name[0]] = get_pos[j]
+                if get_pos[j+1] == 'n':
+                    mapped_form[get_name[0]] = get_pos[j]
+                
+
+        # mapping of last message
+        if i == len_convo-1:
+            print(get_name[0])
+            for k in get_name[1].split(" "):
+                if k == 'behind':
+                    last_form[get_name[0]]= mapped_form[get_name[0]]
+                    last_form[get_name[1].split(" ")[-1][:-1]]= str(int(mapped_form['Peter'])+1)
+                    
+                    
+                if k == 'front':
+                    last_form[get_name[0]]= mapped_form[get_name[0]]
+                    last_form[get_name[1].split(" ")[-1][:-1]]= str(int(mapped_form['Peter'])-1)
+                
+                
+    
+    # checking the truth
+    for key1 , value1 in mapped_form.items():
+        for key2,value2 in last_form.items():
+            if key1 == key2:
+                if value1 == value2:
+                    continue
+                else:
+                    liar=key2
+    print(last_form)
+    return liar
+
+    
 
 
 conversation=[
 "John:I'm in 1st position.",
 "Peter:I'm in 2nd position.",
 "Tom:I'm in 1st position.",
-"Peter:The man behind me is Tom."
+"Peter:The man in front of me is Tom."
 ]
-print(find_out_mr_wrong(conversation))
+
+# conversation=[
+# "John:I'm in 1st position.",
+# "Peter:I'm in 2nd position.",
+# "Tom:I'm in 1st position.",
+# "Peter:The man behind me is Tom."
+# ]
+print(find_out_mr_wrong2(conversation))
 
     
 
