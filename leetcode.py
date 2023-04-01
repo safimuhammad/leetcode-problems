@@ -1094,56 +1094,125 @@ def find_out_mr_wrong2(conversation):
     mapped_form={}
     last_form={}
     len_convo=len(conversation)
-    liar='Null'
+    peter_state=mapped_form.copy()
+    liar=[]
+    last_message=''
+    total_people=[]
+
+    solid_pos=[]
+    # print(total_people)
+
     # revamping the mapping system
+    for guys in conversation:
+        if guys.split(":")[0] in total_people:
+            continue
+        total_people.append(guys.split(":")[0])
+    
+
+
     for i in range(len_convo):
-        print(conversation[i])
+       
         get_name = conversation[i].split(":")
-        get_pos = get_name[1]
+        get_pos = get_name[1].split(" ")
+        
         for j in range(len(get_pos)):
-            
-            if get_pos[j].isnumeric():
-                if get_pos[j+1] == 's':
-                    mapped_form[get_name[0]] = get_pos[j]
-                if get_pos[j+1] == 'n':
-                    mapped_form[get_name[0]] = get_pos[j]
+
+
+            if get_pos[j][0].isnumeric(): #checks chars such as 1st 2nd etc in string
+                if len(get_pos[j])==3:
+                    mapped_form[get_name[0]] = get_pos[j][0]
+                    solid_pos.append(get_name[0])
+
+                    
+            if get_pos[j] == 'people' or get_pos[j] == 'man': #checks context less chars such as man behind/infront me is ___ etc
+                if get_pos[j+1] == 'in': #referring to in front
+                    if get_name[0] in mapped_form.keys():
+                        continue
+                    else:
+                        mapped_form[get_name[0]] = str( int(mapped_form[list(mapped_form.keys())[-1]])+int(get_pos[j-1])if mapped_form else 0 +int(get_pos[j-1]))
+                    # print(get_name[0] in mapped_form.keys(),mapped_form)
+                    
+                        # if len(mapped_form) >=2:
+                        #     print(get_name[0])
+                
+                if get_pos[j+1] == 'behind':
+                    if get_pos[j-1].isnumeric():
+                        temp=str(len(total_people)-int(get_pos[j-1]))
+                        if len(solid_pos)==0:
+                            if temp in mapped_form.values():
+                                for key,value in mapped_form.items():
+                                    if key in solid_pos:
+                                        continue
+                                    else:   
+                                        mapped_form[key]= str(int(value)+1)
+                        
+                        mapped_form[get_name[0]] = str(len(total_people)-int(get_pos[j-1]))
+                        
+                    elif i != len_convo-1:
+                        # print(get_name[1],'mapp')
+                        # just condsider for now at this point map is empty
+
+                        mapped_form[get_name[0]] = str(len(mapped_form)+1)
+                        mapped_form[get_name[1].split(" ")[-1][:-1]] = str(int(mapped_form[get_name[0]])+1)
+                        print(mapped_form)
+
+                       
+
+
+        # print(mapped_form,'mapped_form)
                 
 
         # mapping of last message
         if i == len_convo-1:
-            print(get_name[0])
+            arr_mapped=list(mapped_form.keys())
+            
+            last_message=get_name
             for k in get_name[1].split(" "):
                 if k == 'behind':
-                    last_form[get_name[0]]= mapped_form[get_name[0]]
-                    last_form[get_name[1].split(" ")[-1][:-1]]= str(int(mapped_form['Peter'])+1)
-                    
+                    #add loop to handle dynamic sizes
+
+                    peter_state[arr_mapped[(arr_mapped.index(get_name[0]))+1]] = arr_mapped.index(get_name[1].split(" ")[-1][:-1])+1  #add a condition if pos exceeds array size
+                    peter_state[arr_mapped[(arr_mapped.index(get_name[0]))]] = arr_mapped.index(get_name[1].split(" ")[-1][:-1])
+
+                    print(arr_mapped[(arr_mapped.index(get_name[0]))])
+
+
+
+                    # last_form[get_name[0]]= mapped_form[get_name[0]]
+                    # last_form[get_name[1].split(" ")[-1][:-1]]= str(int(mapped_form['Peter'])+1)
+                    last_form=peter_state
                     
                 if k == 'front':
-                    last_form[get_name[0]]= mapped_form[get_name[0]]
-                    last_form[get_name[1].split(" ")[-1][:-1]]= str(int(mapped_form['Peter'])-1)
+                    # print(peter_state.keys(),'peter_state')
+                    # print(arr_mapped[(arr_mapped.index(get_name[0]))-1])
+                    # # print(peter_state[arr_mapped[(arr_mapped.index(get_name[0]))-1]],'j')
+
+                    peter_state[arr_mapped[(arr_mapped.index(get_name[0]))-1]] = arr_mapped.index(get_name[1].split(" ")[-1][:-1])+1
+
+                    # last_form[get_name[1].split(" ")[-1][:-1]]= str(int(mapped_form['Peter'])-1)
+                    # last_form[get_name[0]]= mapped_form[get_name[0]]
+                    last_form=peter_state
+                    
                 
-                
+    print(peter_state,mapped_form,last_message)
     
     # checking the truth
     for key1 , value1 in mapped_form.items():
         for key2,value2 in last_form.items():
             if key1 == key2:
-                if value1 == value2:
-                    continue
-                else:
-                    liar=key2
-    print(last_form)
-    return liar
+                if str(value1) != str(value2):
+                    liar.append(key2)
+                if key1 == last_message[0]:
+                    if str(value1) != str(value2):
+                        print('dishonest justification')
+                        # liar.append(key1)
+                        # return key1
+    print(liar)
+                        
+    return None if len(liar)>1 or len(liar)==0 else liar
 
     
 
-
-conversation=[
-"John:I'm in 1st position.",
-"Peter:I'm in 2nd position.",
-"Tom:I'm in 1st position.",
-"Peter:The man in front of me is Tom."
-]
 
 # conversation=[
 # "John:I'm in 1st position.",
@@ -1151,14 +1220,46 @@ conversation=[
 # "Tom:I'm in 1st position.",
 # "Peter:The man behind me is Tom."
 # ]
+# conversation=[
+# "John:I'm in 1st position.",
+# "Peter:I'm in 2nd position.",
+# "Tom:I'm in 1st position.",
+# "Peter:The man in front of me is Tom."
+# ]
+
+# conversation=[
+# "John:I'm in 1st position.",
+# "Peter:There is 1 people in front of me.",
+# "Tom:There are 2 people behind me.",
+# "Peter:The man behind me is Tom."
+# ]
+# conversation=[
+# "John:The man behind me is Peter.",
+# "Peter:There is 1 people in front of me.",
+# "Tom:There are 2 people behind me.",
+# "Peter:The man behind me is Tom."
+# ]
+# conversation=[
+#     'Dowfls:There is 0 people behind me.',
+#     "Dowfls:I'm in 4th position.",
+#     "Ljiyxbmr:I'm in 2nd position.",
+#     'Ljiyxbmr:There is 1 people in front of me.',
+#     'Cvvugb:There are 2 people in front of me.',
+#     'Cvvugb:There is 1 people behind me.',
+#     'Tzjlvruhk:The man behind me is Dowfls.',
+#     'Tzjlvruhk:There are 2 people in front of me.'] #me is not in the list solve 
+
+conversation=[
+    "Tom:The man behind me is Bob.",
+    "Bob:The man in front of me is Tom.",
+    "Bob:The man behind me is Gary.",
+    "Gary:The man in front of me is Bob.",
+    "Fred:I'm in 1st position."] #answer should be Fred
+
 print(find_out_mr_wrong2(conversation))
 
-    
+
 
     
- 
-   
-    
-
 
 
